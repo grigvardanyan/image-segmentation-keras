@@ -16,8 +16,7 @@ class_colors = [  ( random.randint(0,255),random.randint(0,255),random.randint(0
 
 def get_pairs_from_paths( images_path , segs_path ):
 	images = glob.glob( os.path.join(images_path,"*.jpg")  ) + glob.glob( os.path.join(images_path,"*.png")  ) +  glob.glob( os.path.join(images_path,"*.jpeg")  )
-	segmentations  =  glob.glob( os.path.join(segs_path,"*.png")  ) 
-
+	segmentations  =  glob.glob( os.path.join(segs_path,"*.png") ) 
     input_output = dict()
     n_classes = 18
     lables = ["background","skin","nose","eye_g","l_eye","r_eye","l_brow","r_brow","l_ear","r_ear","mouth","u_lip","l_lip","hair","hat","ear_r","neck_l","neck","cloth"]
@@ -33,7 +32,7 @@ def get_pairs_from_paths( images_path , segs_path ):
         for i in range(len(lables)):
             if lables[i] in seg_img:
                 input_output[id][i] = seg_img
-	return input_output,images
+    return input_output,images
 
 def get_image_arr( path , width , height , imgNorm="sub_mean" , odering='channels_first' ):
 
@@ -79,16 +78,16 @@ def get_segmentation_arr( paths , nClasses ,  width , height , no_reshape=False 
 
 def verify_segmentation_dataset( images_path , segs_path , n_classes ):
 	
-	img_seg_pairs = get_pairs_from_paths( images_path , segs_path )
+	img_seg_pairs, images = get_pairs_from_paths( images_path , segs_path )
 
 	assert len(img_seg_pairs)>0 , "Dataset looks empty or path is wrong "
 	
-	for im_fn , seg_fn in tqdm(img_seg_pairs) :
-		img = cv2.imread( im_fn )
-		seg = cv2.imread( seg_fn )
-
-		assert ( img.shape[0]==seg.shape[0] and img.shape[1]==seg.shape[1] ) , "The size of image and the annotation does not match or they are corrupt "+ im_fn + " " + seg_fn
-		assert ( np.max(seg[:,:,0]) < n_classes) , "The pixel values of seg image should be from 0 to "+str(n_classes-1) + " . Found pixel value "+str(np.max(seg[:,:,0]))
+	for id in tqdm(img_seg_pairs) :
+        img_path = get_path(images,id)
+		img = cv2.imread( img_path )
+        for seg_path in img_seg_pairs[id]:
+		    seg = cv2.imread( seg_path )
+            assert ( img.shape[0]==seg.shape[0] and img.shape[1]==seg.shape[1] ) , "The size of image and the annotation does not match or they are corrupt "+ img_path + " " + seg_path
 
 	print("Dataset verified! ")
 
