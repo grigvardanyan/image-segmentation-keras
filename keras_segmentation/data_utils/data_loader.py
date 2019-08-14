@@ -12,7 +12,7 @@ from .augmentation import augment_seg
 random.seed(0)
 class_colors = [(random.randint(0,255), random.randint(0,255), random.randint(0,255)) for _ in range(5000)]
 
-def get_pairs_from_paths( images_path , seges_path):
+def get_pairs_from_paths( images_path , segs_path):
     images = glob.glob( os.path.join(images_path,"*.jpg")  ) + glob.glob( os.path.join(images_path,"*.png")  ) +  glob.glob( os.path.join(images_path,"*.jpeg") )
     segmentations = glob.glob( os.path.join(segs_path,"*.png") )
     input_output = dict()
@@ -20,16 +20,17 @@ def get_pairs_from_paths( images_path , seges_path):
     lables = ["background","skin","nose","eye_g","l_eye","r_eye","l_brow","r_brow","l_ear","r_ear","mouth","u_lip","l_lip","hair","hat","ear_r","neck_l","neck","cloth"]
 
     for seg_img in segmentations:
-        id = seg_img.split("_")[0]
-        assert(seg_img == id), ("Current file doesn't has proper file format it need to has following format index_mask: " + seg_img)
-
-        id = int(id)
+        parts = seg_img.split("\\")
+        id = parts[len(parts) - 1 ].split("_")[0]
+        if parts[len(parts) -1 ] == id :
+            assert((parts[len(parts) - 1 ] == id), ("Current file doesn't has proper file format it need to has following format index_mask: " + seg_img))
         if id not in input_output:
             input_output[id] = [""] * n_classes
 
         for i in range(len(lables)):
             if lables[i] in seg_img:
                 input_output[id][i] = seg_img
+                break
     return input_output, images
 
 def get_image_arr( path , width , height , imgNorm="sub_mean" , odering='channels_first' ):
@@ -83,7 +84,7 @@ def verify_segmentation_dataset( images_path , segs_path , n_classes ):
 
 def image_segmentation_generator( images_path , segs_path ,  batch_size,  n_classes , input_height , input_width , output_height , output_width  , do_augment=False ):
     img_id_seg_pairs , images = get_pairs_from_paths( images_path , segs_path )
-    random.shuffle( img_seg_pairs )
+    #random.shuffle( img_seg_pairs )
     zipped = itertools.cycle( img_id_seg_pairs  )
 
     while True:
@@ -92,7 +93,7 @@ def image_segmentation_generator( images_path , segs_path ,  batch_size,  n_clas
 
         for _ in range( batch_size) :
             key = next(zipped)
-            im , seg = get_path(images , key) , img_id_seg_pairs[key]
+            im , seg = get_path(images , int(key)) , img_id_seg_pairs[key]
             im = cv2.imread(im , 1 )
 
             if do_augment:
