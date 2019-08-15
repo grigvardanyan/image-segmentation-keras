@@ -75,7 +75,7 @@ def verify_segmentation_dataset( images_path , segs_path , n_classes ):
     assert len(img_seg_pairs)>0 , "Dataset looks empty or path is wrong "
 
     for id in tqdm(img_seg_pairs) :
-        img_path = get_path(images,id)
+        img_path = get_path(images,int(id))
         img = cv2.imread( img_path )
         for seg_path in img_seg_pairs[id]:
             seg = cv2.imread( seg_path )

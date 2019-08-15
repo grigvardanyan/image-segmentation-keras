@@ -22,7 +22,7 @@ def cli_train():
 	parser.add_argument("--input_height", type=int , default = None  )
 	parser.add_argument("--input_width", type=int , default = None )
 
-	parser.add_argument('--not_verify_dataset',action='store_false')
+	parser.add_argument('--not_verify_dataset',default= False)
 	parser.add_argument("--checkpoints_path", type = str  , default = None   )
 	parser.add_argument("--epochs", type = int, default = 5 )
 	parser.add_argument("--batch_size", type = int, default = 2 )
