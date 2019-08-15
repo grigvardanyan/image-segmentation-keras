@@ -21,7 +21,7 @@ def get_pairs_from_paths( images_path , segs_path):
     lables = ["background","skin","nose","eye_g","l_eye","r_eye","l_brow","r_brow","l_ear","r_ear","mouth","u_lip","l_lip","hair","hat","ear_r","neck_l","neck","cloth"]
 
     for seg_img in segmentations:
-        parts = seg_img.split("\\")
+        parts = seg_img.split("/")
         id = parts[len(parts) - 1 ].split("_")[0]
         if parts[len(parts) -1 ] == id :
             assert((parts[len(parts) - 1 ] == id), ("Current file doesn't has proper file format it need to has following format index_mask: " + seg_img))
