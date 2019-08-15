@@ -103,7 +103,7 @@ def train( model  ,
 	if not validate:
 		for ep in range( epochs ):
 			print("Starting Epoch " , ep )
-			model.fit_generator( train_gen , steps_per_epoch  , epochs=1 )
+			model.fit_generator( train_gen , steps_per_epoch  , epochs=1 ,use_multiprocessing=False)
 			if not checkpoints_path is None:
 				model.save_weights( checkpoints_path + "." + str( ep ) )
 				print("saved " , checkpoints_path + ".model." + str( ep ) )
@@ -111,7 +111,7 @@ def train( model  ,
 	else:
 		for ep in range( epochs ):
 			print("Starting Epoch " , ep )
-			model.fit_generator( train_gen , steps_per_epoch  , validation_data=val_gen , validation_steps=200 ,  epochs=1 )
+			model.fit_generator( train_gen , steps_per_epoch  , validation_data=val_gen , validation_steps=200 ,  epochs=1 ,use_multiprocessing=False)
 			if not checkpoints_path is None:
 				model.save_weights( checkpoints_path + "." + str( ep )  )
 				print("saved " , checkpoints_path + ".model." + str( ep ) )
