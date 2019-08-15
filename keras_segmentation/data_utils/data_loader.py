@@ -1,3 +1,4 @@
+
 import os
 import cv2
 import glob
@@ -93,7 +94,11 @@ def image_segmentation_generator( images_path , segs_path ,  batch_size,  n_clas
 
         for _ in range( batch_size) :
             key = next(zipped)
-            im , seg = get_path(images , int(key)) , img_id_seg_pairs[key]
+            try:
+                im , seg = get_path(images , int(key)) , img_id_seg_pairs[key]
+            except Exception as ex:
+                print(key)
+                input("Error occured")
             im = cv2.imread(im , 1 )
 
             if do_augment:
