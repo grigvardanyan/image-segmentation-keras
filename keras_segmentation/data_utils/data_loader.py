@@ -85,7 +85,11 @@ def verify_segmentation_dataset( images_path , segs_path , n_classes ):
 
 def image_segmentation_generator( images_path , segs_path ,  batch_size,  n_classes , input_height , input_width , output_height , output_width  , do_augment=False ):
     img_id_seg_pairs , images = get_pairs_from_paths( images_path , segs_path )
-    #random.shuffle( img_seg_pairs )
+    keys = list(img_id_seg_pairs.keys())
+    random.shuffle(keys)
+    random.shuffle(keys)
+    random.shuffle(keys)
+    img_id_seg_pairs = dict([(key,img_id_seg_pairs[key])for key in keys])
     zipped = itertools.cycle( img_id_seg_pairs  )
 
     while True:
