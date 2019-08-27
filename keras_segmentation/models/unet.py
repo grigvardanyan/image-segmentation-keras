@@ -5,7 +5,7 @@ from .config import IMAGE_ORDERING
 from .model_utils import get_segmentation_model
 from .vgg16 import get_vgg_encoder
 from .mobilenet import get_mobilenet_encoder
-from .basic_models import vanilla_encoder
+from .basic_models import vanilla_encoder, ConvBlock, UpConvolution,Bottom_Layer
 from .resnet50 import get_resnet50_encoder
 
 
@@ -55,44 +55,18 @@ def unet_mini( n_classes , input_height=360, input_width=480   ):
 	return model
 
 
-def _unet( n_classes , encoder , l1_skip_conn=True,  input_height=416, input_width=608  ):
+def _unet( n_classes , encoder , l1_skip_conn=False,  input_height=416, input_width=608 ,filter_size=64 ):
 
-	img_input , levels = encoder( input_height=input_height ,  input_width=input_width )
-	[f1 , f2 , f3 , f4 , f5 ] = levels 
+    img_input , levels, last_node = encoder( input_height=input_height ,  input_width=input_width )
+    bottom = Bottom_Layer(last_node, 1024, 3, 1)
+    up_input = bottom
+    levels_len = len(levels)
 
-	o = f4
-
-	o = ( ZeroPadding2D( (1,1) , data_format=IMAGE_ORDERING ))(o)
-	o = ( Conv2D(512, (3, 3), padding='valid', data_format=IMAGE_ORDERING))(o)
-	o = ( BatchNormalization())(o)
-
-	o = ( UpSampling2D( (2,2), data_format=IMAGE_ORDERING))(o)
-	o = ( concatenate([ o ,f3],axis=MERGE_AXIS )  )
-	o = ( ZeroPadding2D( (1,1), data_format=IMAGE_ORDERING))(o)
-	o = ( Conv2D( 256, (3, 3), padding='valid', data_format=IMAGE_ORDERING))(o)
-	o = ( BatchNormalization())(o)
-
-	o = ( UpSampling2D( (2,2), data_format=IMAGE_ORDERING))(o)
-	o = ( concatenate([o,f2],axis=MERGE_AXIS ) )
-	o = ( ZeroPadding2D((1,1) , data_format=IMAGE_ORDERING ))(o)
-	o = ( Conv2D( 128 , (3, 3), padding='valid' , data_format=IMAGE_ORDERING ) )(o)
-	o = ( BatchNormalization())(o)
-
-	o = ( UpSampling2D( (2,2), data_format=IMAGE_ORDERING))(o)
-	
-	if l1_skip_conn:
-		o = ( concatenate([o,f1],axis=MERGE_AXIS ) )
-
-	o = ( ZeroPadding2D((1,1)  , data_format=IMAGE_ORDERING ))(o)
-	o = ( Conv2D( 64 , (3, 3), padding='valid'  , data_format=IMAGE_ORDERING ))(o)
-	o = ( BatchNormalization())(o)
-
-	o =  Conv2D( n_classes , (3, 3) , padding='same', data_format=IMAGE_ORDERING )( o )
-	
-	model = get_segmentation_model(img_input , o )
-
-
-	return model
+    for level_i in range(1,levels_len + 1):
+        up_input = UpConvolution(up_input,levels[levels_len - level_i],filter_size * (2**(levels_len - level_i)))
+    output =  Conv2D( n_classes , (3, 3) , padding='same', data_format=IMAGE_ORDERING )( up_input )
+    model = get_segmentation_model(img_input , output )
+    return model
 
 
 def unet(  n_classes ,  input_height=416, input_width=608 , encoder_level=3 ) : 
