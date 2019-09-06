@@ -64,7 +64,7 @@ def _unet( n_classes , encoder , l1_skip_conn=False,  input_height=416, input_wi
 
     for level_i in range(1,levels_len + 1):
         up_input = UpConvolution(up_input,levels[levels_len - level_i],filter_size * (2**(levels_len - level_i)))
-    output =  Conv2D( n_classes , (3, 3) , padding='same', data_format=IMAGE_ORDERING )( up_input )
+    output =  Conv2D( n_classes , (1, 1) , padding='same', data_format=IMAGE_ORDERING )( up_input )
     model = get_segmentation_model(img_input , output )
     return model
 
