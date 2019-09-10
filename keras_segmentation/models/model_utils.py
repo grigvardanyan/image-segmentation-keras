@@ -73,7 +73,18 @@ def get_segmentation_model( input , output ):
 
 	o_shape = Model(img_input , o ).output_shape
 	i_shape = Model(img_input , o ).input_shape
-
+	output_width = o_shape[2]
+	output_height = o_shape[1]
+	input_height = i_shape[1]
+	input_width = i_shape[2]
+	n_classes = o_shape[3]
+	print(************)
+	print("ow-",output_width)
+	print("oh-",output_height)
+	print("ih-",input_height)
+	print("iw-",input_width)
+	print("c-",n_classes)
+	a = input()
 	
 	o = (Activation('softmax'))(o)
 	model = Model( img_input , o )
