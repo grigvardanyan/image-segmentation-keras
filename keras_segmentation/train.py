@@ -4,6 +4,7 @@ from .data_utils.data_loader import image_segmentation_generator , verify_segmen
 from .models import model_from_name
 import os
 import six
+import tensorflow as tf
 
 def find_latest_checkpoint( checkpoints_path ):
 	ep = 0
@@ -62,7 +63,7 @@ def train( model  ,
 	if not optimizer_name is None:
 		model.compile(loss='categorical_crossentropy',
 			optimizer= optimizer_name ,
-			metrics=['accuracy'])
+			metrics=['accuracy',tf.keras.metrics.categorical_accuracy])
 
 	if not checkpoints_path is None:
 		open( checkpoints_path+"_config.json" , "w" ).write( json.dumps( {
@@ -110,7 +111,7 @@ def train( model  ,
 			print("Finished Epoch" , ep )
 	else:
 		for ep in range( epochs ):
-			print("Starting Epoch " , ep )
+			print("Starting Epoch " , ep," with validation" )
 			model.fit_generator( train_gen , steps_per_epoch  , validation_data=val_gen , validation_steps=533 ,  epochs=1 ,use_multiprocessing=False)
 			if not checkpoints_path is None:
 				model.save_weights( checkpoints_path + "." + str( ep )  )
