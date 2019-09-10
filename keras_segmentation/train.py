@@ -96,7 +96,7 @@ def train( model  ,
 
 	train_gen = image_segmentation_generator( train_images , train_annotations ,  batch_size,  n_classes , input_height , input_width , output_height , output_width   )
 
-        valudate = True
+        validate = True
 	if validate:
 		val_gen  = image_segmentation_generator( val_images , val_annotations ,  val_batch_size,  n_classes , input_height , input_width , output_height , output_width   )
 
