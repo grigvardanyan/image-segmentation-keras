@@ -78,7 +78,7 @@ def get_segmentation_model( input , output ):
 	input_height = i_shape[1]
 	input_width = i_shape[2]
 	n_classes = o_shape[3]
-	print(************)
+	print('************')
 	print("ow-",output_width)
 	print("oh-",output_height)
 	print("ih-",input_height)
