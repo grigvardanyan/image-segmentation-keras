@@ -66,9 +66,9 @@ def resize_image( inp ,  s , data_format ):
 			)( inp )
 
 
-def get_segmentation_model( input , output ):
+def get_segmentation_model( inp , output ):
 
-	img_input = input
+	img_input = inp
 	o = output
 
 	o_shape = Model(img_input , o ).output_shape
