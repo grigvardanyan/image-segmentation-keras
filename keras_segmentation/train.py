@@ -66,7 +66,7 @@ def train( model  ,
 		model.compile(loss='categorical_crossentropy',
 			optimizer= optimizer_name ,
 			metrics=['accuracy','categorical_accuracy'])
-	print(model.summary())
+	
 	if not checkpoints_path is None:
 		open( checkpoints_path+"_config.json" , "w" ).write( json.dumps( {
 			"model_class" : model.model_name ,
