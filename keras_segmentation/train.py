@@ -4,6 +4,7 @@ from .data_utils.data_loader import image_segmentation_generator , verify_segmen
 from .models import model_from_name
 import os
 import six
+from keras import backend as K
 import tensorflow as tf
 
 def find_latest_checkpoint( checkpoints_path ):
@@ -39,8 +40,7 @@ def train( model  ,
 		steps_per_epoch=512,
 		optimizer_name='adadelta' 
 	):
-
-
+	K.set_floatx('float16')
 	if  isinstance(model, six.string_types) : # check if user gives model name insteead of the model object
 		# create the model from the name
 		assert ( not n_classes is None ) , "Please provide the n_classes"
