@@ -40,7 +40,9 @@ def train( model  ,
 		steps_per_epoch=512,
 		optimizer_name='adadelta' 
 	):
+	
 	K.set_floatx('float16')
+	print(K.backend.floatx())
 	if  isinstance(model, six.string_types) : # check if user gives model name insteead of the model object
 		# create the model from the name
 		assert ( not n_classes is None ) , "Please provide the n_classes"
@@ -64,7 +66,7 @@ def train( model  ,
 		model.compile(loss='categorical_crossentropy',
 			optimizer= optimizer_name ,
 			metrics=['accuracy','categorical_accuracy'])
-        print(model.summary())
+	print(model.summary())
 	if not checkpoints_path is None:
 		open( checkpoints_path+"_config.json" , "w" ).write( json.dumps( {
 			"model_class" : model.model_name ,
