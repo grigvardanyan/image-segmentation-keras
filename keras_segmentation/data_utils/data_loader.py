@@ -65,10 +65,10 @@ def get_segmentation_arr( paths , nClasses ,  width , height , no_reshape=False 
             img = cv2.imread(paths[i], 0)
             img = cv2.resize(img, ( width , height ) , interpolation=cv2.INTER_NEAREST )
             seg_labels[:,:,i] = (img == 255 ).astype(int)
-    if no_reshape:
-        return seg_labels
+    #if no_reshape:
+        #return seg_labels
 
-    seg_labels = np.reshape(seg_labels, ( width * height , nClasses ))
+    #seg_labels = np.reshape(seg_labels, ( width * height , nClasses ))
     return seg_labels
 
 def verify_segmentation_dataset( images_path , segs_path , n_classes ):
