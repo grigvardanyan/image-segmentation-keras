@@ -64,7 +64,7 @@ def train( model  ,
 		model.compile(loss='categorical_crossentropy',
 			optimizer= optimizer_name ,
 			metrics=['accuracy','categorical_accuracy'])
-
+        print(model.summary())
 	if not checkpoints_path is None:
 		open( checkpoints_path+"_config.json" , "w" ).write( json.dumps( {
 			"model_class" : model.model_name ,
@@ -92,7 +92,6 @@ def train( model  ,
 		if validate:
 			print("Verifying val dataset")
 			verify_segmentation_dataset( val_images , val_annotations , n_classes )
-
 
 	train_gen = image_segmentation_generator( train_images , train_annotations ,  batch_size,  n_classes , input_height , input_width , output_height , output_width   )
 	validate = True
