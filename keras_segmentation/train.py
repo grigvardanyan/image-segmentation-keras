@@ -42,7 +42,7 @@ def train( model  ,
 	):
 	
 	K.set_floatx('float16')
-	print(K.backend.floatx())
+	print(K.floatx())
 	if  isinstance(model, six.string_types) : # check if user gives model name insteead of the model object
 		# create the model from the name
 		assert ( not n_classes is None ) , "Please provide the n_classes"
