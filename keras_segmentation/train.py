@@ -96,11 +96,14 @@ def train( model  ,
 
 	train_gen = image_segmentation_generator( train_images , train_annotations ,  batch_size,  n_classes , input_height , input_width , output_height , output_width   )
 	validate = True
+	print("Validate ******************************")
+	print(validate)
 	if validate:
+		print("*************************************Generate Validate")
 		val_gen  = image_segmentation_generator( val_images , val_annotations ,  val_batch_size,  n_classes , input_height , input_width , output_height , output_width   )
-	if validate:
+	if not validate:
 		for ep in range( epochs ):
-			print("Starting Epoch " , ep )
+			print("Starting Epoch" , ep )
 			model.fit_generator( train_gen , steps_per_epoch  , epochs=1 ,use_multiprocessing=False)
 			if not checkpoints_path is None:
 				model.save_weights( checkpoints_path + "." + str( ep ) )
@@ -109,7 +112,7 @@ def train( model  ,
 	else:
 		print("With Validate")
 		for ep in range( epochs ):
-			print("Starting Epoch " , ep)
+			print("Starting Epoch with Validate" , ep)
 			model.fit_generator( train_gen , steps_per_epoch  , validation_data=val_gen , validation_steps=533 ,  epochs=1 ,use_multiprocessing=False)
 			if not checkpoints_path is None:
 				model.save_weights( checkpoints_path + "." + str( ep )  )
