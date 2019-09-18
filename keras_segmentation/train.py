@@ -41,7 +41,7 @@ def train( model  ,
 		optimizer_name='adadelta' 
 	):
 	
-	K.set_floatx('float16')
+	#K.set_floatx('float16')
 	
 	if  isinstance(model, six.string_types) : # check if user gives model name insteead of the model object
 		# create the model from the name
