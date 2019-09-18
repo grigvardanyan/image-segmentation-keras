@@ -96,7 +96,7 @@ def train( model  ,
 			verify_segmentation_dataset( val_images , val_annotations , n_classes )
 
 	train_gen = image_segmentation_generator( train_images , train_annotations ,  batch_size,  n_classes , input_height , input_width , output_height , output_width   )
-	validate = True
+	validate = False
 	print("Validate ************************************************************************")
 	print(validate)
 	print("Float type***********************************************************************")
