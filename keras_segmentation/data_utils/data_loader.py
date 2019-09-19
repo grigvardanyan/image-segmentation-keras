@@ -4,6 +4,7 @@ import cv2
 import glob
 import ntpath
 import random
+import keras
 import itertools
 import numpy as np
 from tqdm import tqdm
@@ -13,6 +14,67 @@ from .augmentation import augment_seg
 random.seed(0)
 class_colors = [(random.randint(0,255), random.randint(0,255), random.randint(0,255)) for _ in range(5000)]
 
+class DataGenerator(keras.utils.Sequence):
+    'Generates data for Keras'
+    def __init__(self, x_path, y_path, batch_size=4 dim=(512,512,3), n_channels=3
+                 n_classes=19 shuffle=True):
+        'Initialization'
+        img_id_seg_pairs , images = get_pairs_from_paths( x_path , y_path )
+        self.images = images
+        self.dim = dim
+        self.batch_size = batch_size
+        self.labels = img_id_seg_pairs
+        self.list_IDs = list(img_id_seg_pairs.keys())
+        self.n_channels = n_channels
+        self.n_classes = n_classes
+        self.shuffle = shuffle
+        self.on_epoch_end()
+        
+    def __len__(self):
+        'Denotes the number of batches per epoch'
+        return int(np.floor(len(self.list_IDs) / self.batch_size))
+    
+    def __getitem__(self, index):
+        'Generate one batch of data'
+        # Generate indexes of the batch
+        indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
+
+        # Find list of IDs
+        list_IDs_temp = [self.list_IDs[k] for k in indexes]
+
+        # Generate data
+        X, y = self.__data_generation(list_IDs_temp)
+
+        return X, y
+    
+     def on_epoch_end(self):
+        'Updates indexes after each epoch'
+        self.indexes = np.arange(len(self.list_IDs))
+        if self.shuffle == True:
+            np.random.shuffle(self.indexes)
+
+    def __data_generation(self, list_IDs_temp):
+        'Generates data containing batch_size samples' # X : (n_samples, *dim, n_channels)
+        # Initialization
+        
+        X = []
+        Y = []
+
+        # Generate data
+        for key in list_IDs_temp:
+            try:
+                im , seg = get_path(self.images , int(key)) , self.labels[key]
+            except Exception as ex:
+                print(key)
+                input("Error occured")
+            im = cv2.imread(im , 1 )
+            
+            X.append( get_image_arr(im , 512 , 512 ,odering=IMAGE_ORDERING )  )
+            Y.append( get_segmentation_arr( seg , self.n_classes , 512 , 512 )  )
+
+        return np.array(X) , np.array(Y)
+    
+    
 def get_pairs_from_paths( images_path , segs_path):
     images = glob.glob( os.path.join(images_path,"*.jpg")  ) + glob.glob( os.path.join(images_path,"*.png")  ) +  glob.glob( os.path.join(images_path,"*.jpeg") )
     segmentations = glob.glob( os.path.join(segs_path,"*.png") )
