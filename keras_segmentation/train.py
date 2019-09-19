@@ -102,6 +102,8 @@ def train( model  ,
 	print(validate)
 	print("Float type***********************************************************************")
 	print(K.floatx())
+	model_path = "/home/3dzuk/grig/ckpt/cp-{epoch:02d}.hdf5"
+	cp_callback = tf.keras.callbacks.ModelCheckpoint(model_path,verbose=1,period=2)
 	
 	if validate:
 		print("Generate Validate*************************************")
@@ -117,13 +119,13 @@ def train( model  ,
 			print("Finished Epoch" , ep )
 	else:
 		print("With Validate")
-		for ep in range( epochs ):
-			print("Starting Epoch with Validate" , ep)
-			model.fit_generator( train_gen , steps_per_epoch  , validation_data=val_gen , epochs=1 ,use_multiprocessing=True)
-			if not checkpoints_path is None:
-				model.save_weights( checkpoints_path + "." + str( ep )  )
-				print("saved " , checkpoints_path + ".model." + str( ep ) )
-			print("Finished Epoch" , ep )
+		#for ep in range( epochs ):
+		#print("Starting Epoch with Validate" , ep)
+		model.fit_generator( train_gen , steps_per_epoch  , validation_data=val_gen , epochs=epochs ,use_multiprocessing=False,callbacks=[cp_callback])
+		if not checkpoints_path is None:
+			model.save_weights( checkpoints_path + "." + str( ep )  )
+			#print("saved " , checkpoints_path + ".model." + str( ep ) )
+			#print("Finished Epoch" , ep )
 
 
 
