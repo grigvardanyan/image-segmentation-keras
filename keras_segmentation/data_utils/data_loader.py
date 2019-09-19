@@ -16,8 +16,8 @@ class_colors = [(random.randint(0,255), random.randint(0,255), random.randint(0,
 
 class DataGenerator(keras.utils.Sequence):
     'Generates data for Keras'
-    def __init__(self, x_path, y_path, batch_size=4, dim=(512,512,3), n_channels=3
-                 n_classes=19 shuffle=True):
+    def __init__(self, x_path, y_path, batch_size=4, dim=(512,512,3), n_channels=3,
+                 n_classes=19 ,shuffle=True):
         'Initialization'
         img_id_seg_pairs , images = get_pairs_from_paths( x_path , y_path )
         self.images = images
