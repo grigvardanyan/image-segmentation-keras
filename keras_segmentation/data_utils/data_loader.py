@@ -47,7 +47,7 @@ class DataGenerator(keras.utils.Sequence):
 
         return X, y
     
-     def on_epoch_end(self):
+    def on_epoch_end(self):
         'Updates indexes after each epoch'
         self.indexes = np.arange(len(self.list_IDs))
         if self.shuffle == True:
