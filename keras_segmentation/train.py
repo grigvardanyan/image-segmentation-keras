@@ -1,6 +1,6 @@
 import argparse
 import json
-from .data_utils.data_loader import image_segmentation_generator , verify_segmentation_dataset
+from .data_utils.data_loader import image_segmentation_generator , verify_segmentation_dataset,DataGenerator
 from .models import model_from_name
 import os
 import six
@@ -95,15 +95,17 @@ def train( model  ,
 			print("Verifying val dataset")
 			verify_segmentation_dataset( val_images , val_annotations , n_classes )
 
-	train_gen = image_segmentation_generator( train_images , train_annotations ,  batch_size,  n_classes , input_height , input_width , output_height , output_width   )
-	validate = False
+	train_gen = DataGenerator(train_images,train_annotations)
+	#image_segmentation_generator( train_images , train_annotations ,  batch_size,  n_classes , input_height , input_width , output_height , output_width   )
+	validate = True
 	print("Validate ************************************************************************")
 	print(validate)
 	print("Float type***********************************************************************")
 	print(K.floatx())
 	if validate:
 		print("Generate Validate*************************************")
-		val_gen  = image_segmentation_generator( val_images , val_annotations ,  val_batch_size,  n_classes , input_height , input_width , output_height , output_width   )
+		val_gen  = DataGenerator(val_images,val_annotations,val_batch_size)
+		#image_segmentation_generator( val_images , val_annotations ,  val_batch_size,  n_classes , input_height , input_width , output_height , output_width   )
 	if not validate:
 		for ep in range( epochs ):
 			print("Starting Epoch" , ep )
