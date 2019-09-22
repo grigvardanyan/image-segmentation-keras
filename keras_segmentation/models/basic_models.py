@@ -34,7 +34,7 @@ def UpConvolution(input,
                   left_conv,
                   filter_size
                   ):
-    conv_transpose = Conv2DTranspose(filter_size, (2, 2), strides=(2, 2), padding='same')(input)
+    conv_transpose =UpSampling2D(size=(2,2))(input)# Conv2DTranspose(filter_size, (2, 2), strides=(2, 2), padding='same')(input)
     merge = ( concatenate([ conv_transpose ,left_conv],axis=MERGE_AXIS )  )
     batch_norm = BatchNormalization()(merge)
     conv = ConvBlock(batch_norm, filter_size)
