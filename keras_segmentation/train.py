@@ -76,8 +76,6 @@ def train( model  ,
 			"output_height" : output_height ,
 			"output_width" : output_width 
 		}))
-	print(model.summary())
-	hold = input()
         
 	if ( not (load_weights is None )) and  len( load_weights ) > 0:
 		print("Loading weights from " , load_weights )
