@@ -70,7 +70,7 @@ def vanilla_encoder( input_height=224 ,
     levels.append(conv)
 
     for i in range(1,4):
-	    print("Down conv filters- {}".format((2**i) * filter_size))
+        print("Down conv filters- {}".format((2**i) * filter_size))
         conv = ConvBlock(conv_pooled , (2**i) * filter_size)
         conv , conv_pooled = ConvBlock(conv , (2**i) * filter_size, pooling=True)
         levels.append(conv)
