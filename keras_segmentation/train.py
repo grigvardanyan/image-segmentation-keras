@@ -104,7 +104,7 @@ def train( model  ,
 	print(validate)
 	print("Float type***********************************************************************")
 	print(K.floatx())
-	model_path = "/home/ubuntu/grig/cp-{epoch:02d}.hdf5"
+	model_path = "/home/ubuntu/grig/cp-{epoch:02d}-{loss:.2f}.hdf5"
 	cp_callback = tf.keras.callbacks.ModelCheckpoint(model_path,verbose=1,period=2)
 	
 	if validate:
