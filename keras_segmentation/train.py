@@ -107,7 +107,7 @@ def train( model  ,
 	
 	if validate:
 		print("Generate Validate*************************************")
-		val_gen  = DataGenerator(val_images,val_annotations,val_batch_size)
+	val_gen  = DataGenerator(val_images,val_annotations,val_batch_size)
 		#image_segmentation_generator( val_images , val_annotations ,  val_batch_size,  n_classes , input_height , input_width , output_height , output_width   )
 	if not validate:
 		for ep in range( epochs ):
