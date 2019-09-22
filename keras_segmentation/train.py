@@ -95,7 +95,7 @@ def train( model  ,
 			print("Verifying val dataset")
 			verify_segmentation_dataset( val_images , val_annotations , n_classes )
 
-	train_gen = DataGenerator(train_images,train_annotations)
+	train_gen = DataGenerator(train_images,train_annotations,batch_size)
 	#image_segmentation_generator( train_images , train_annotations ,  batch_size,  n_classes , input_height , input_width , output_height , output_width   )
 	validate = True
 	print("Validate ************************************************************************")
