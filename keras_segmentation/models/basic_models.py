@@ -27,9 +27,9 @@ def ConvBlock(input ,
         pooled = (MaxPooling2D((pool_size, pool_size) , data_format=IMAGE_ORDERING  ))( x )
     dropout = pooled
     if dropout:
-        dropout = Dropout(droprate)(pooled)
+        dropout = Dropout(droprate)(dropout)
     if pooling:
-	return x, dropout
+	return x,dropout
     return x
 
 def UpConvolution(input,
