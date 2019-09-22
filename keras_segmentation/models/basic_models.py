@@ -52,7 +52,7 @@ def Bottom_Layer(input,
 def vanilla_encoder( input_height=224 ,
                   input_width=224,
                   kernel = 3,
-                  filter_size = 64,
+                  filter_size = 32,
                   pad = 1,
                   pool_size = 2 
                  ):
