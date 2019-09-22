@@ -40,6 +40,7 @@ def UpConvolution(input,
     batch_norm = BatchNormalization()(merge)
     conv = ConvBlock(batch_norm, filter_size)
     conv = ConvBlock(conv, filter_size)
+    print("Upconv filters - {}".format(filter_size))
     return conv
 
 def Bottom_Layer(input,
