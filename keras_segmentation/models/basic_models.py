@@ -24,7 +24,7 @@ def ConvBlock(input ,
     x = (Activation('relu'))( x )
     pooled = x	
     if pooling:
-	pooled = (MaxPooling2D((pool_size, pool_size) , data_format=IMAGE_ORDERING ))(x)
+	pooled = MaxPooling2D((pool_size, pool_size),data_format=IMAGE_ORDERING)(x)
     dropout = pooled
     if dropout:
 	dropout = Dropout(droprate)(dropout)
