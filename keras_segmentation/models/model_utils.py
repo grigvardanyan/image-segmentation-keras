@@ -84,7 +84,6 @@ def get_segmentation_model( inp , output ):
 	print("ih-",input_height)
 	print("iw-",input_width)
 	print("c-",n_classes)
-	a = input()
 	
 	o = (Activation('softmax'))(o)
 	model = Model( img_input , o )
