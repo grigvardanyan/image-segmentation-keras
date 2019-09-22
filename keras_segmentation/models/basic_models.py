@@ -22,12 +22,14 @@ def ConvBlock(input ,
     x = (Conv2D(filter_size, (kernel, kernel) , data_format=IMAGE_ORDERING , padding='valid'))( x )
     x = (BatchNormalization())( x )
     x = (Activation('relu'))( x )
+    pooled = x	
     if pooling:
         pooled = (MaxPooling2D((pool_size, pool_size) , data_format=IMAGE_ORDERING  ))( x )
-        if dropout:
-            dropout = Dropout(droprate)(pooled)
-            pooled = dropout
-        return x , pooled
+    dropout = pooled
+    if dropout:
+        dropout = Dropout(droprate)(pooled)
+    if pooling:
+	return x, dropout
     return x
 
 def UpConvolution(input,
@@ -38,7 +40,7 @@ def UpConvolution(input,
     merge = ( concatenate([ conv_transpose ,left_conv],axis=MERGE_AXIS )  )
     batch_norm = BatchNormalization()(merge)
     conv = ConvBlock(batch_norm, filter_size)
-    conv = ConvBlock(conv, filter_size,dropout=True)
+    conv = ConvBlock(conv, filter_size)
     return conv
 
 def Bottom_Layer(input,
@@ -46,7 +48,7 @@ def Bottom_Layer(input,
                  kernel,
                  pad):
     bottom_1 = ConvBlock(input,filter_size)
-    bottom_2 = ConvBlock(bottom_1,filter_size)
+    bottom_2 = ConvBlock(bottom_1,filter_size,droprate=0.5,dropout=True )
     return bottom_2
 
 def vanilla_encoder( input_height=224 ,
@@ -69,7 +71,7 @@ def vanilla_encoder( input_height=224 ,
 
     for i in range(1,4):
         conv = ConvBlock(conv_pooled , (2**i) * filter_size)
-        conv , conv_pooled = ConvBlock(conv , (2**i) * filter_size, pooling=True, dropout=True)
+        conv , conv_pooled = ConvBlock(conv , (2**i) * filter_size, pooling=True)
         levels.append(conv)
     return img_input, levels , conv_pooled
 
