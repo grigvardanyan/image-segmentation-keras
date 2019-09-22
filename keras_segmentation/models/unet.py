@@ -58,6 +58,7 @@ def unet_mini( n_classes , input_height=360, input_width=480   ):
 def _unet( n_classes , encoder , l1_skip_conn=False,  input_height=416, input_width=608 ,filter_size=32 ):
 
     img_input , levels, last_node = encoder( input_height=input_height ,  input_width=input_width,filter_size=filter_size )
+    print("Middle filters - {}".format(filter_size*16))
     bottom = Bottom_Layer(last_node, filter_size*16, 3, 1)
     up_input = bottom
     levels_len = len(levels)
