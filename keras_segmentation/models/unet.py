@@ -170,9 +170,9 @@ def UNet(filters_dims, activation='relu', kernel_initializer='glorot_uniform', p
         print(new_inputs.shape)
         up = Conv2D(filters_dims[i], 3, activation=activation, padding=padding,
                     kernel_initializer=kernel_initializer)(UpSampling2D(size=(2, 2))(new_inputs))
-        concat = merge([conv_layers[i-1], up], mode='concat', concat_axis=3)
+        con = merge([conv_layers[i-1], up], mode='concat', concat_axis=3)
         conv = Conv2D(filters_dims[i], 3, activation=activation, padding=padding,
-                      kernel_initializer=kernel_initializer)(concat)
+                      kernel_initializer=kernel_initializer)(con)
         new_inputs = Conv2D(filters_dims[i], 3, activation=activation, padding=padding,
                             kernel_initializer=kernel_initializer)(conv)
         print(new_inputs.shape)
