@@ -67,15 +67,15 @@ def train( model  ,
 	#		optimizer= optimizer_name ,
 	#		metrics=['accuracy','categorical_accuracy'])
 	
-	if not checkpoints_path is None:
-		open( checkpoints_path+"_config.json" , "w" ).write( json.dumps( {
-			"model_class" : model.model_name ,
-			"n_classes" : n_classes ,
-			"input_height" : input_height ,
-			"input_width" : input_width ,
-			"output_height" : output_height ,
-			"output_width" : output_width 
-		}))
+	#if not checkpoints_path is None:
+	#	open( checkpoints_path+"_config.json" , "w" ).write( json.dumps( {
+	#		"model_class" : model.model_name ,
+	#		"n_classes" : n_classes ,
+	#		"input_height" : input_height ,
+	#		"input_width" : input_width ,
+	#		"output_height" : output_height ,
+	#		"output_width" : output_width 
+	#	}))
 	model = UNet([64, 128, 256, 512])    
 	if ( not (load_weights is None )) and  len( load_weights ) > 0:
 		print("Loading weights from " , load_weights )
