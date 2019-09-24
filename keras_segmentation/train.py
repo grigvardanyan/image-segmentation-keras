@@ -6,7 +6,7 @@ import os
 import six
 from keras import backend as K
 import tensorflow as tf
-
+from .models.unet import UNet
 def find_latest_checkpoint( checkpoints_path ):
 	ep = 0
 	r = None
@@ -46,10 +46,10 @@ def train( model  ,
 	if  isinstance(model, six.string_types) : # check if user gives model name insteead of the model object
 		# create the model from the name
 		assert ( not n_classes is None ) , "Please provide the n_classes"
-		if (not input_height is None ) and ( not input_width is None):
-			model = model_from_name[ model ](  n_classes , input_height=input_height , input_width=input_width )
-		else:
-			model = model_from_name[ model ](  n_classes )
+		#if (not input_height is None ) and ( not input_width is None):
+		#	model = model_from_name[ model ](  n_classes , input_height=input_height , input_width=input_width )
+		#else:
+		#	model = model_from_name[ model ](  n_classes )
 
 	n_classes = model.n_classes
 	input_height = model.input_height
@@ -62,10 +62,10 @@ def train( model  ,
 		assert not (  val_images is None ) 
 		assert not (  val_annotations is None ) 
 
-	if not optimizer_name is None:
-		model.compile(loss='categorical_crossentropy',
-			optimizer= optimizer_name ,
-			metrics=['accuracy','categorical_accuracy'])
+	#if not optimizer_name is None:
+	#	model.compile(loss='categorical_crossentropy',
+	#		optimizer= optimizer_name ,
+	#		metrics=['accuracy','categorical_accuracy'])
 	
 	if not checkpoints_path is None:
 		open( checkpoints_path+"_config.json" , "w" ).write( json.dumps( {
@@ -76,7 +76,7 @@ def train( model  ,
 			"output_height" : output_height ,
 			"output_width" : output_width 
 		}))
-        
+	model = UNet([64, 128, 256, 512])    
 	if ( not (load_weights is None )) and  len( load_weights ) > 0:
 		print("Loading weights from " , load_weights )
 		model.load_weights(load_weights)

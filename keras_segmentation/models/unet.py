@@ -98,7 +98,91 @@ def mobilenet_unet( n_classes ,  input_height=224, input_width=224 , encoder_lev
 	model.model_name = "mobilenet_unet"
 	return model
 
+def f1(y_true, y_pred):
+    '''
+    Calculates the F1 by using keras.backend
+    '''
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
 
+    def recall(y_true, y_pred):
+        """Recall metric.
+        Only computes a batch-wise average of recall.
+        Computes the recall, a metric for multi-label classification of
+        how many relevant items are selected.
+        """
+        recall = true_positives / (possible_positives + K.epsilon())
+        return recall
+
+    def precision(y_true, y_pred):
+        """Precision metric.
+        Only computes a batch-wise average of precision.
+        Computes the precision, a metric for multi-label classification of
+        how many selected items are relevant.
+        """
+        precision = true_positives / (predicted_positives + K.epsilon())
+        return precision
+
+    precision = precision(y_true, y_pred)
+    recall = recall(y_true, y_pred)
+    return 2 * ((precision * recall) / (precision + recall))
+
+def UNet(filters_dims, activation='relu', kernel_initializer='glorot_uniform', padding='same'):
+    inputs = Input((512, 512, 3))
+    new_inputs = inputs
+    conv_layers = []
+    # Encoding Phase
+    print("Encoding Phase")
+    for i in range(len(filters_dims) - 1):
+        print("Stage :", i+1)
+        print("========================================")
+        print(new_inputs.shape)
+        conv = Conv2D(filters_dims[i], 3, activation=activation, padding=padding,
+                      kernel_initializer=kernel_initializer)(new_inputs)
+        conv = Conv2D(filters_dims[i], 3, activation=activation, padding=padding,
+                      kernel_initializer=kernel_initializer)(conv)
+        conv_layers.append(conv)
+        new_inputs = MaxPooling2D(pool_size=(2, 2))(conv)
+        print(new_inputs.shape)
+        # op = BatchNormalization()(op)
+
+    # middle phase
+    print("middle phase")
+    print("========================================")
+    conv = Conv2D(filters_dims[-1], 3, activation=activation, padding=padding,
+                  kernel_initializer=kernel_initializer)(new_inputs)
+    conv = Conv2D(filters_dims[-1], 3, activation=activation, padding=padding,
+                  kernel_initializer=kernel_initializer)(conv)
+    new_inputs = Dropout(0.5)(conv)
+    print(new_inputs.shape)
+
+    filters_dims.reverse()
+    conv_layers.reverse()
+
+    # Decoding Phase
+    print("Decoding Phase")
+    for i in range(1, len(filters_dims)):
+        print(i)
+        print("========================================")
+
+        print(new_inputs.shape)
+        up = Conv2D(filters_dims[i], 3, activation=activation, padding=padding,
+                    kernel_initializer=kernel_initializer)(UpSampling2D(size=(2, 2))(new_inputs))
+        concat = keras.layers.merge([conv_layers[i-1], up], mode='concat', concat_axis=3)
+        conv = Conv2D(filters_dims[i], 3, activation=activation, padding=padding,
+                      kernel_initializer=kernel_initializer)(concat)
+        new_inputs = Conv2D(filters_dims[i], 3, activation=activation, padding=padding,
+                            kernel_initializer=kernel_initializer)(conv)
+        print(new_inputs.shape)
+    outputs = Conv2D(19, 1, activation='softmax', padding='same',
+                     kernel_initializer='glorot_uniform')(new_inputs)
+    print(outputs.shape)
+    model = Model(input=inputs, output=outputs, name='UNet')
+    model.compile(optimizer=keras.optimizers.Adam(lr=1e-4),
+                  loss='categorical_crossentropy',
+                  metrics=['accuracy', "categorical_accuracy", f1])
+    return model
 
 if __name__ == '__main__':
 	m = unet_mini( 101 )
