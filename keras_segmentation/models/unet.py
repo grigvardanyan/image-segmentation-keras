@@ -1,6 +1,6 @@
 from keras.models import *
 from keras.layers import *
-
+from keras.optimizers import *
 from .config import IMAGE_ORDERING
 #from .model_utils import get_segmentation_model
 from .vgg16 import get_vgg_encoder
@@ -169,7 +169,7 @@ def UNet(filters_dims, activation='relu', kernel_initializer='glorot_uniform', p
         print(new_inputs.shape)
         up = Conv2D(filters_dims[i], 3, activation=activation, padding=padding,
                     kernel_initializer=kernel_initializer)(UpSampling2D(size=(2, 2))(new_inputs))
-        concat = keras.layers.merge([conv_layers[i-1], up], mode='concat', concat_axis=3)
+        concat = merge([conv_layers[i-1], up], mode='concat', concat_axis=3)
         conv = Conv2D(filters_dims[i], 3, activation=activation, padding=padding,
                       kernel_initializer=kernel_initializer)(concat)
         new_inputs = Conv2D(filters_dims[i], 3, activation=activation, padding=padding,
@@ -179,7 +179,7 @@ def UNet(filters_dims, activation='relu', kernel_initializer='glorot_uniform', p
                      kernel_initializer='glorot_uniform')(new_inputs)
     print(outputs.shape)
     model = Model(input=inputs, output=outputs, name='UNet')
-    model.compile(optimizer=keras.optimizers.Adam(lr=1e-4),
+    model.compile(optimizer=Adam(lr=1e-4),
                   loss='categorical_crossentropy',
                   metrics=['accuracy', "categorical_accuracy", f1])
     return model
