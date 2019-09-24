@@ -2,7 +2,7 @@ from keras.models import *
 from keras.layers import *
 
 from .config import IMAGE_ORDERING
-from .model_utils import get_segmentation_model
+#from .model_utils import get_segmentation_model
 from .vgg16 import get_vgg_encoder
 from .mobilenet import get_mobilenet_encoder
 from .basic_models import vanilla_encoder, ConvBlock, UpConvolution,Bottom_Layer
@@ -50,7 +50,7 @@ def unet_mini( n_classes , input_height=360, input_width=480   ):
 	
 	o = Conv2D( n_classes, (1, 1) , data_format=IMAGE_ORDERING ,padding='same')(conv5)
 
-	model = get_segmentation_model(img_input , o )
+	#model = get_segmentation_model(img_input , o )
 	model.model_name = "unet_mini"
 	return model
 
@@ -66,7 +66,7 @@ def _unet( n_classes , encoder , l1_skip_conn=False,  input_height=416, input_wi
     for level_i in range(1,levels_len + 1):
         up_input = UpConvolution(up_input,levels[levels_len - level_i],filter_size * (2**(levels_len - level_i)))
     output =  Conv2D( n_classes , (1, 1) , padding='same', data_format=IMAGE_ORDERING )( up_input )
-    model = get_segmentation_model(img_input , output )
+    #model = get_segmentation_model(img_input , output )
     return model
 
 
