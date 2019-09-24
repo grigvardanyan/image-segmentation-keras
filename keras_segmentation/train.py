@@ -51,11 +51,11 @@ def train( model  ,
 		#else:
 		#	model = model_from_name[ model ](  n_classes )
 
-	n_classes = model.n_classes
-	input_height = model.input_height
-	input_width = model.input_width
-	output_height = model.output_height
-	output_width = model.output_width
+	#n_classes = model.n_classes
+	#input_height = model.input_height
+	#input_width = model.input_width
+	#output_height = model.output_height
+	#output_width = model.output_width
 
 
 	if validate:
