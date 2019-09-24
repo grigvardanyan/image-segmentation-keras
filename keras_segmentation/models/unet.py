@@ -1,6 +1,6 @@
 from keras.models import *
 from keras.layers import *
-from keras.layers import merge
+from keras.layers.merge import concatenate
 from keras.optimizers import Adam
 from .config import IMAGE_ORDERING
 #from .model_utils import get_segmentation_model
@@ -68,6 +68,7 @@ def _unet( n_classes , encoder , l1_skip_conn=False,  input_height=416, input_wi
         up_input = UpConvolution(up_input,levels[levels_len - level_i],filter_size * (2**(levels_len - level_i)))
     output =  Conv2D( n_classes , (1, 1) , padding='same', data_format=IMAGE_ORDERING )( up_input )
     #model = get_segmentation_model(img_input , output )
+    model = 4#need to remove
     return model
 
 
@@ -170,7 +171,7 @@ def UNet(filters_dims, activation='relu', kernel_initializer='glorot_uniform', p
         print(new_inputs.shape)
         up = Conv2D(filters_dims[i], 3, activation=activation, padding=padding,
                     kernel_initializer=kernel_initializer)(UpSampling2D(size=(2, 2))(new_inputs))
-        con = merge([conv_layers[i-1], up], mode='concat', concat_axis=3)
+        con = concatenate([conv_layers[i-1], up])
         conv = Conv2D(filters_dims[i], 3, activation=activation, padding=padding,
                       kernel_initializer=kernel_initializer)(con)
         new_inputs = Conv2D(filters_dims[i], 3, activation=activation, padding=padding,
