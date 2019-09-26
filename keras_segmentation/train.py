@@ -131,7 +131,7 @@ def train( model  ,
 		print("With Validate")
 		#for ep in range( epochs ):
 		#print("Starting Epoch with Validate" , ep)
-		model.fit_generator( train_gen  , validation_data=val_gen , epochs=epochs ,use_multiprocessing=False,callbacks=[cp_callback])
+		model.fit_generator( train_gen  , validation_data=val_gen ,steps_per_epoch=steps_per_epoch,validation_steps=2399, epochs=epochs ,use_multiprocessing=False,callbacks=[cp_callback])
 		if not checkpoints_path is None:
 			model.save_weights( checkpoints_path + "." + str( ep )  )
 			#print("saved " , checkpoints_path + ".model." + str( ep ) )

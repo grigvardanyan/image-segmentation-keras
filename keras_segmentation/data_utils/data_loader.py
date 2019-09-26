@@ -29,6 +29,7 @@ class DataGenerator(keras.utils.Sequence):
         self.n_classes = n_classes
         self.shuffle = shuffle
         self.on_epoch_end()
+        print(len(self.list_IDs))
         
     def __len__(self):
         'Denotes the number of batches per epoch'
