@@ -7,6 +7,8 @@ import six
 from keras import backend as K
 import tensorflow as tf
 from .models.unet import UNet
+from .models.resnet50 import build_res_unet
+
 def find_latest_checkpoint( checkpoints_path ):
 	ep = 0
 	r = None
@@ -20,6 +22,12 @@ def find_latest_checkpoint( checkpoints_path ):
 
 
 
+def focal_loss(gamma=2., alpha=.25):
+	def focal_loss_fixed(y_true, y_pred):
+		pt_1 = tf.where(tf.equal(y_true, 1), y_pred, tf.ones_like(y_pred))
+		pt_0 = tf.where(tf.equal(y_true, 0), y_pred, tf.zeros_like(y_pred))
+		return -K.mean(alpha * K.pow(1. - pt_1, gamma) * K.log(pt_1)) - K.mean((1 - alpha) * K.pow(pt_0, gamma) * K.log(1. - pt_0))
+	return focal_loss_fixed
 
 def train( model  , 
 		train_images  , 
@@ -76,7 +84,9 @@ def train( model  ,
 	#		"output_height" : output_height ,
 	#		"output_width" : output_width 
 	#	}))
-	model = UNet([64, 128, 256, 512])    
+	model = build_res_unet((512,512,3))#UNet([64, 128, 256, 512])    
+	model.compile(loss=focal_loss,optimizer= optimizer_name ,metrics=['accuracy'])
+
 	if ( not (load_weights is None )) and  len( load_weights ) > 0:
 		print("Loading weights from " , load_weights )
 		model.load_weights(load_weights)
