@@ -8,6 +8,7 @@ from keras import backend as K
 import tensorflow as tf
 from .models.unet import UNet
 from .models.resnet50 import build_res_unet
+import pickle
 
 def find_latest_checkpoint( checkpoints_path ):
 	ep = 0
@@ -131,7 +132,9 @@ def train( model  ,
 		print("With Validate")
 		#for ep in range( epochs ):
 		#print("Starting Epoch with Validate" , ep)
-		model.fit_generator( train_gen  , validation_data=val_gen ,steps_per_epoch=steps_per_epoch,validation_steps=2399, epochs=epochs ,use_multiprocessing=False,callbacks=[cp_callback])
+		history = model.fit_generator( train_gen  , validation_data=val_gen ,steps_per_epoch=steps_per_epoch,validation_steps=2399, epochs=epochs ,use_multiprocessing=False,callbacks=[cp_callback])
+		with open(checkpoints_path, 'wb') as file_pi:
+			pickle.dump(history.history, file_pi)
 		if not checkpoints_path is None:
 			model.save_weights( checkpoints_path + "." + str( ep )  )
 			#print("saved " , checkpoints_path + ".model." + str( ep ) )
