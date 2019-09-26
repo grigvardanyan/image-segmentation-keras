@@ -86,7 +86,7 @@ def train( model  ,
 	#		"output_width" : output_width 
 	#	}))
 	model = build_res_unet((512,512,3))#UNet([64, 128, 256, 512])    
-	model.compile(loss='categorical_crossentropy',optimizer= optimizer_name ,metrics=['accuracy',,'categorical_accuracy'])
+	model.compile(loss='categorical_crossentropy',optimizer= optimizer_name ,metrics=['accuracy','categorical_accuracy'])
 
 	if ( not (load_weights is None )) and  len( load_weights ) > 0:
 		print("Loading weights from " , load_weights )

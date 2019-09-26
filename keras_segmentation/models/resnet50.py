@@ -211,19 +211,19 @@ def encoder(x):
     main_path = res_block(main_path, [256, 256], [(2, 2), (1, 1)])
     to_decoder.append(main_path)
 
-    #main_path = res_block(main_path, [512, 512], [(2, 2), (1, 1)])
-    #to_decoder.append(main_path)
+    main_path = res_block(main_path, [512, 512], [(2, 2), (1, 1)])
+    to_decoder.append(main_path)
 
     return to_decoder
 
 
 def decoder(x, from_encoder):
 
-    #main_path = UpSampling2D(size=(2, 2))(x)
-    #main_path = concatenate([main_path, from_encoder[3]], axis=3)
-    #main_path = res_block(main_path, [512, 512], [(1, 1), (1, 1)])
-
     main_path = UpSampling2D(size=(2, 2))(x)
+    main_path = concatenate([main_path, from_encoder[3]], axis=3)
+    main_path = res_block(main_path, [512, 512], [(1, 1), (1, 1)])
+
+    main_path = UpSampling2D(size=(2, 2))(main_path)
     main_path = concatenate([main_path, from_encoder[2]], axis=3)
     main_path = res_block(main_path, [256, 256], [(1, 1), (1, 1)])
 
@@ -243,7 +243,7 @@ def build_res_unet(input_shape):
 
     to_decoder = encoder(inputs)
 
-    path = res_block(to_decoder[2], [512, 512], [(2, 2), (1, 1)])
+    path = res_block(to_decoder[3], [1024, 1024], [(2, 2), (1, 1)])
 
     path = decoder(path, from_encoder=to_decoder)
 
