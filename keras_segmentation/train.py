@@ -87,7 +87,6 @@ def train( model  ,
 	#	}))
 	model = build_res_unet((512,512,3))#UNet([64, 128, 256, 512])    
 	model.compile(loss=focal_loss,optimizer= optimizer_name ,metrics=['accuracy'])
-
 	if ( not (load_weights is None )) and  len( load_weights ) > 0:
 		print("Loading weights from " , load_weights )
 		model.load_weights(load_weights)
