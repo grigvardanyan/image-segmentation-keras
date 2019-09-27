@@ -59,6 +59,12 @@ def Mean_IOU(y_true, y_pred):
     iou = tf.gather(iou, indices=tf.where(legal_labels))
     return K.mean(iou)
 
+def iou_coef(y_true, y_pred):
+    smooth=1
+    intersection = K.sum(K.abs(y_true * y_pred), axis=-1)
+    union = K.sum(y_true,-1) + K.sum(y_pred,-1) - intersection
+    return (intersection + smooth) / ( union + smooth)
+
 def dice_coef(y_true, y_pred):
 	smooth=1e-7
 	y_true_f = K.flatten(y_true)
@@ -95,7 +101,7 @@ def train( model  ,
 		assert not (  val_annotations is None ) 
 
 	model = res_net((512,512,3))   
-	model.compile(loss=dice_coef_loss,optimizer= optimizer_name ,metrics=['accuracy',Mean_IOU, dice_coef])
+	model.compile(loss=dice_coef_loss,optimizer= optimizer_name ,metrics=['accuracy',iou_coef, dice_coef])
 
 	if ( not (load_weights is None )) and  len( load_weights ) > 0:
 		print("Loading weights from " , load_weights )
