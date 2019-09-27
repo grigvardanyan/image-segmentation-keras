@@ -30,7 +30,7 @@ def model_from_checkpoint_path( checkpoints_path ):
 	assert ( not latest_weights is None ) , "Checkpoint not found."
 	model = build_res_unet((512,512,3))
 	print("loaded weights " , latest_weights )
-	model.load_weights(latest_weights)
+	model.load_weights(checkpoints_path)
 	return model
 
 
