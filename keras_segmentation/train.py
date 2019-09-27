@@ -40,6 +40,42 @@ def loss(y_true, y_pred):
     # or reduce_sum and/or axis=-1
 	return tf.reduce_mean(loss)
 
+def Mean_IOU(y_true, y_pred):
+    nb_classes = K.int_shape(y_pred)[-1]
+    iou = []
+    true_pixels = K.argmax(y_true, axis=-1)
+    pred_pixels = K.argmax(y_pred, axis=-1)
+    void_labels = K.equal(K.sum(y_true, axis=-1), 0)
+    for i in range(0, nb_classes): # exclude first label (background) and last label (void)
+        true_labels = K.equal(true_pixels, i) & ~void_labels
+        pred_labels = K.equal(pred_pixels, i) & ~void_labels
+        inter = tf.to_int32(true_labels & pred_labels)
+        union = tf.to_int32(true_labels | pred_labels)
+        legal_batches = K.sum(tf.to_int32(true_labels), axis=1)>0
+        ious = K.sum(inter, axis=1)/K.sum(union, axis=1)
+        iou.append(K.mean(tf.gather(ious, indices=tf.where(legal_batches)))) # returns average IoU of the same objects
+    iou = tf.stack(iou)
+    legal_labels = tf.debugging.is_nan(iou)
+    iou = tf.gather(iou, indices=tf.where(legal_labels))
+    return K.mean(iou)
+
+def dice_coef(y_true, y_pred):
+	smooth=1e-7
+	y_true_f = K.flatten(y_true)
+	y_pred_f = K.flatten(y_pred)
+	intersection = K.sum(y_true_f * y_pred_f)
+	return (2. * intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) + smooth)
+
+def dice_coef_multilabel(y_true, y_pred ):
+    dice=0
+    numLabels=19
+    for index in range(numLabels):
+        dice -= dice_coef(y_true[:,index,:,:,:], y_pred[:,index,:,:,:])
+    return dice
+
+def dice_coef_loss(y_true, y_pred):
+    return 1-dice_coef_multilabel(y_true, y_pred)
+
 def train( model  , 
 		train_images  , 
 		train_annotations , 
@@ -66,7 +102,7 @@ def train( model  ,
 		assert not (  val_annotations is None ) 
 
 	model = res_net((512,512,3))   
-	model.compile(loss=loss,optimizer= optimizer_name ,metrics=['accuracy'])
+	model.compile(loss=dice_coef_loss,optimizer= optimizer_name ,metrics=['accuracy',Mean_IOU, dice_coef_multilabel])
 
 	if ( not (load_weights is None )) and  len( load_weights ) > 0:
 		print("Loading weights from " , load_weights )
