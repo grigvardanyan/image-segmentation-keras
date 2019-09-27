@@ -66,15 +66,8 @@ def dice_coef(y_true, y_pred):
 	intersection = K.sum(y_true_f * y_pred_f)
 	return (2. * intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) + smooth)
 
-def dice_coef_multilabel(y_true, y_pred ):
-    dice=0
-    numLabels=19
-    for index in range(numLabels):
-        dice -= dice_coef(y_true[:,index,:,:,:], y_pred[:,index,:,:,:])
-    return dice
-
 def dice_coef_loss(y_true, y_pred):
-    return 1-dice_coef_multilabel(y_true, y_pred)
+    return 1 - dice_coef(y_true, y_pred)
 
 def train( model  , 
 		train_images  , 
@@ -102,7 +95,7 @@ def train( model  ,
 		assert not (  val_annotations is None ) 
 
 	model = res_net((512,512,3))   
-	model.compile(loss=dice_coef_loss,optimizer= optimizer_name ,metrics=['accuracy',Mean_IOU, dice_coef_multilabel])
+	model.compile(loss=dice_coef_loss,optimizer= optimizer_name ,metrics=['accuracy',Mean_IOU, dice_coef])
 
 	if ( not (load_weights is None )) and  len( load_weights ) > 0:
 		print("Loading weights from " , load_weights )
