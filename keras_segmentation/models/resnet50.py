@@ -1,9 +1,10 @@
 import keras
+import keras.backend as K
+
 from keras.models import *
 from keras.layers import *
 from keras import layers
-import keras.backend as K
-
+from .basic_models import vanilla_encoder, ConvBlock, UpConvolution,Bottom_Layer
 # code taken from https://github.com/fchollet/deep-learning-models/blob/master/resnet50.py
 
 
@@ -250,3 +251,18 @@ def build_res_unet(input_shape):
     path = Conv2D(filters=19, kernel_size=(1, 1), activation='sigmoid')(path)
 
     return Model(input=inputs, output=path)
+    
+def res_net(input_shape):
+    filter_size = 64
+    inputs = Input(shape=input_shape)
+
+    to_decoder = encoder(inputs)
+
+    up_input = res_block(to_decoder[3], [1024, 1024], [(2, 2), (1, 1)])
+    levels_len = len(to_decoder)
+
+    for level_i in range(1,levels_len + 1):
+        up_input = UpConvolution(up_input,to_decoder[levels_len - level_i],filter_size * (2**(levels_len - level_i)))
+    output =  Conv2D( 19 , (1, 1) , padding='same', data_format=IMAGE_ORDERING ,activation='sigmoid')( up_input )
+    
+    return Model(input=inputs, output=output)
