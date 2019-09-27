@@ -55,7 +55,7 @@ def Mean_IOU(y_true, y_pred):
         ious = K.sum(inter, axis=1)/K.sum(union, axis=1)
         iou.append(K.mean(tf.gather(ious, indices=tf.where(legal_batches)))) # returns average IoU of the same objects
     iou = tf.stack(iou)
-    legal_labels = tf.debugging.is_nan(iou)
+    legal_labels = ~tf.debugging.is_nan(iou)
     iou = tf.gather(iou, indices=tf.where(legal_labels))
     return K.mean(iou)
 
