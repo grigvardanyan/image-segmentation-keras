@@ -24,10 +24,10 @@ class_colors = [  ( random.randint(0,255),random.randint(0,255),random.randint(0
 
 def model_from_checkpoint_path( checkpoints_path ):
 
-	assert ( os.path.isfile(checkpoints_path+"_config.json" ) ) , "Checkpoint not found."
-	model_config = json.loads(open(  checkpoints_path+"_config.json" , "r" ).read())
-	latest_weights = find_latest_checkpoint( checkpoints_path )
-	assert ( not latest_weights is None ) , "Checkpoint not found."
+	#assert ( os.path.isfile(checkpoints_path+"_config.json" ) ) , "Checkpoint not found."
+	#model_config = json.loads(open(  checkpoints_path+"_config.json" , "r" ).read())
+	#latest_weights = find_latest_checkpoint( checkpoints_path )
+	#assert ( not latest_weights is None ) , "Checkpoint not found."
 	model = build_res_unet((512,512,3))
 	print("loaded weights " , latest_weights )
 	model.load_weights(checkpoints_path)
