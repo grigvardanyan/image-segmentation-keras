@@ -1,6 +1,6 @@
 import argparse
 import json
-from .data_utils.data_loader import image_segmentation_generator , verify_segmentation_dataset,DataGenerator,DataGenerator2
+from .data_utils.data_loader import image_segmentation_generator , verify_segmentation_dataset,DataGenerator
 from .models import model_from_name
 import os
 import six
@@ -92,7 +92,7 @@ def train( model  ,
 	train_gen = DataGenerator(train_images,train_annotations,batch_size)
 	#image_segmentation_generator( train_images , train_annotations ,  batch_size,  n_classes , input_height , input_width , output_height , output_width   )
 	
-	val_gen  = DataGenerator2(val_images,val_annotations,val_batch_size)
+	val_gen  = DataGenerator(val_images,val_annotations,val_batch_size)
 	#image_segmentation_generator( val_images , val_annotations ,  val_batch_size,  n_classes , input_height , input_width , output_height , output_width   )
 
 	#Saving during training
