@@ -7,7 +7,7 @@ import six
 from keras import backend as K
 import tensorflow as tf
 from .models.unet import UNet
-from .models.resnet50 import build_res_unet
+from .models.resnet50 import build_res_unet,res_net
 import pickle
 
 def find_latest_checkpoint( checkpoints_path ):
@@ -65,7 +65,7 @@ def train( model  ,
 		assert not (  val_images is None ) 
 		assert not (  val_annotations is None ) 
 
-	model = build_res_unet((512,512,3))   
+	model = res_net((512,512,3))   
 	model.compile(loss=loss,optimizer= optimizer_name ,metrics=['accuracy'])
 
 	if ( not (load_weights is None )) and  len( load_weights ) > 0:

@@ -14,6 +14,7 @@ import json
 from .models.config import IMAGE_ORDERING
 from . import  metrics 
 from .models import model_from_name
+from .models.resnet50 import build_res_unet,res_net
 
 import six
 
@@ -27,7 +28,7 @@ def model_from_checkpoint_path( checkpoints_path ):
 	model_config = json.loads(open(  checkpoints_path+"_config.json" , "r" ).read())
 	latest_weights = find_latest_checkpoint( checkpoints_path )
 	assert ( not latest_weights is None ) , "Checkpoint not found."
-	model = model_from_name[ model_config['model_class']  ]( model_config['n_classes'] , input_height=model_config['input_height'] , input_width=model_config['input_width'] )
+	model = build_res_unet((512,512,3))
 	print("loaded weights " , latest_weights )
 	model.load_weights(latest_weights)
 	return model
@@ -49,11 +50,11 @@ def predict( model=None , inp=None , out_fname=None , checkpoints_path=None    )
 	orininal_w = inp.shape[1]
 
 
-	output_width = model.output_width
-	output_height  = model.output_height
-	input_width = model.input_width
-	input_height = model.input_height
-	n_classes = model.n_classes
+	output_width =512
+	output_height  = output_width
+	input_width = output_width
+	input_height = output_width
+	n_classes = 19
 
 	x = get_image_arr( inp , input_width  , input_height , odering=IMAGE_ORDERING )
 	pr = model.predict( np.array([x]) )[0]
