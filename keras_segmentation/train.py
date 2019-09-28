@@ -27,6 +27,13 @@ def iou_coef(y_true, y_pred):
     union = K.sum(y_true,-1) + K.sum(y_pred,-1) - intersection
     return (intersection + smooth) / ( union + smooth)
 
+def mean_iou(y_true, y_pred):
+	acc = 0
+	for i in range(0,19):
+		acc+=iou_coef(y_true[:,:,i],y_pred[:,:,i])
+	acc = acc/19
+	return acc
+
 def dice_coef(y_true, y_pred):
 	smooth=1e-7
 	y_true_f = K.flatten(y_true)
@@ -34,8 +41,25 @@ def dice_coef(y_true, y_pred):
 	intersection = K.sum(y_true_f * y_pred_f)
 	return (2. * intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) + smooth)
 
+def mean_dice_coef(y_true, y_pred):
+	acc = 0
+	for i in range(0,19):
+		acc+=dice_coef(y_true[:,:,i],y_pred[:,:,i])
+	acc = acc/19
+	return acc
+
+
 def dice_coef_loss(y_true, y_pred):
     return 1 - dice_coef(y_true, y_pred)
+
+def tversky_loss(y_true, y_pred):
+	beta = 0.7
+	y_true_f = K.flatten(y_true)
+	y_pred_f = K.flatten(y_pred)
+	numerator = K.sum(y_true_f * y_pred_f)
+	denominator = y_true * y_pred + beta * (1 - y_true) * y_pred + (1 - beta) * y_true * (1 - y_pred)
+	return 1 - (numerator + 1) / (K.sum(denominator) + 1)
+
 
 def train( model  , 
 		train_images  , 
@@ -63,7 +87,7 @@ def train( model  ,
 		assert not (  val_annotations is None ) 
 
 	model = res_net((512,512,3))   
-	model.compile(loss=dice_coef_loss,optimizer= optimizer_name ,metrics=['accuracy',iou_coef, dice_coef])
+	model.compile(loss=tversky_loss,optimizer= optimizer_name ,metrics=['accuracy',mean_iou, mean_dice_coef])
 
 	if ( not (load_weights is None )) and  len( load_weights ) > 0:
 		print("Loading weights from " , load_weights )
