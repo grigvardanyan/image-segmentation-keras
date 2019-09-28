@@ -87,11 +87,7 @@ def train( model  ,
 			
     #Data Generatore
 	train_gen = DataGenerator(train_images,train_annotations,batch_size)
-	#image_segmentation_generator( train_images , train_annotations ,  batch_size,  n_classes , input_height , input_width , output_height , output_width   )
-	
 	val_gen  = DataGenerator(val_images,val_annotations,val_batch_size)
-	#image_segmentation_generator( val_images , val_annotations ,  val_batch_size,  n_classes , input_height , input_width , output_height , output_width   )
-
 	#Saving during training
 	model_path = "/home/ubuntu/grig/cp-{epoch:02d}-{loss:.2f}.hdf5"
 	cp_callback = tf.keras.callbacks.ModelCheckpoint(model_path,verbose=1,period=2)
